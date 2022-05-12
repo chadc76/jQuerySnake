@@ -51,7 +51,7 @@ class Snake {
   }
 
   turn(dir) {
-    if (this.Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[this.dir]) || this.turning) {
+    if (Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[this.dir]) || this.turning) {
       return;
     } else {
       this.turning = true;
@@ -66,5 +66,7 @@ Snake.DIFFS = {
   "S": new Coord(1, 0),
   "W": new Coord(0, -1)
 };
+
+Snake.SYMBOL = "S";
 
 module.exports = Snake;

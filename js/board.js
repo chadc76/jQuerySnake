@@ -1,3 +1,4 @@
+const Coord = require('./coord');
 const Snake = require('./snake');
 
 class Board {
@@ -19,6 +20,18 @@ class Board {
     }
 
     return grid;
+  }
+
+  render() {
+    const grid = Board.blankGrid(this.dim);
+
+    this.snake.segments.forEach( segment => {
+      grid[segment.i][segment.j] = Snake.SYMBOL;
+    })
+
+    const rowStr = grid.map( row => row.join("") ).join("\n");
+
+    console.log(rowStr);
   }
 
   validPosition(coord) {
