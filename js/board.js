@@ -1,6 +1,10 @@
+const Snake = require('./snake');
+
 class Board {
   constructor(dim) {
     this.dim = dim;
+
+    this.snake = new Snake(this);
   }
 
   static blankGrid(dim) {
@@ -15,6 +19,11 @@ class Board {
     }
 
     return grid;
+  }
+
+  validPosition(coord) {
+    return (coord.i >= 0) && (coord.i < this.dim) && 
+    (coord.j >= 0) && (coord.j < this.dim);
   }
 
   

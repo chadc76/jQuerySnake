@@ -19,6 +19,10 @@ class Snake {
   isValid() {
     const head = this.head();
 
+    if (!this.board.validPosition(head)) {
+      return false;
+    }
+
     for (let i = 0; i < this.segments.length - 1; i++) {
       if (this.segments[i].equals(head)){
         return false;
