@@ -19,6 +19,7 @@ class Snake {
   eatApple() {
     if (this.head().equals(this.board.apple.position)) {
       this.growTurns += 3;
+      this.board.score += 10;
       return true;
     } else {
       return false;
@@ -74,7 +75,8 @@ class Snake {
   }
 
   turn(dir) {
-    if (Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[this.dir]) || this.turning) {
+    if (Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[dir]) ||
+      this.turning) {
       return;
     } else {
       this.turning = true;

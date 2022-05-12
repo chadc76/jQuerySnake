@@ -1,6 +1,7 @@
 const SnakeView = require('./snake-view');
 
 $(() => {
-  const rootEl = $('.snake-game');
-  new SnakeView(rootEl);
+  const game = $('.snake-game');
+  const scoreBoard = $('.scoreboard');
+  new SnakeView(game, scoreBoard);
 });

@@ -1,10 +1,13 @@
+const { divide } = require('lodash');
 const Board = require('./board');
 
 class View {
-  constructor($el) {
-    this.$el = $el;
+  constructor($game, $scoreboard) {
+    this.$game = $game;
+    this.$scoreboard = $scoreboard;
 
     this.board = new Board(20);
+    this.setupScoreboard();
     this.setupGrid();
 
     this.intervalId = window.setInterval(
@@ -22,6 +25,7 @@ class View {
   }
 
   render()  {
+    this.setupScoreboard();
     this.updateClasses(this.board.snake.segments, "snake");
     this.updateClasses([this.board.apple.position], "apple");
   }
@@ -46,8 +50,20 @@ class View {
       html += "</ul>";
     }
 
-    this.$el.html(html);
-    this.$li = this.$el.find("li");
+    this.$game.html(html);
+    this.$li = this.$game.find("li");
+  }
+
+  setupScoreboard() {
+    let score = this.board.score.toString();
+    if (score.length === 1) {
+      score = "000" + score
+    } else if (score.length === 2) {
+      score = "00" + score
+    } else if (score.length === 3) {
+      score = "0" + score
+    }
+    this.$scoreboard.html(score);
   }
 
   step() {

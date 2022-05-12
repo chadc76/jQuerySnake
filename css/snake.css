@@ -27,6 +27,10 @@ h1 {
   margin: 30px;
 }
 
+h2 {
+  display: inline-block;
+}
+
 figure {
   display: inline-block;
   border: 10px solid black;
@@ -51,4 +55,13 @@ li {
 
 .apple {
   background: red;
+}
+
+.scoreboard-container {
+  margin: auto;
+  align-content: left;
+}
+
+.score {
+  padding-right: 5px;
 }
