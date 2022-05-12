@@ -16,6 +16,26 @@ class Snake {
     return this.segments.slice(-1)[0];
   }
 
+  eatApple() {
+    if (this.head().equals(this.board.apple.position)) {
+      this.growTurns += 3;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isOccupying(array) {
+    let result = false;
+    this.segments.forEach(segment => {
+      if (segment.i === array[0] && segment.j === array[1]) {
+        result = true;
+        return result;
+      }
+    });
+    return result;
+  }
+
   isValid() {
     const head = this.head();
 
@@ -37,8 +57,12 @@ class Snake {
 
     this.turning = false;
 
+    if (this.eatApple()) {
+      this.board.apple.replace();
+    }
+
     if (this.growTurns > 0) {
-      this.growTruns -= 1;
+      this.growTurns -= 1;
     } else {
       this.segments.shift();
     }
@@ -67,5 +91,7 @@ Snake.DIFFS = {
 };
 
 Snake.SYMBOL = "S";
+
+Snake.GROW_TURN = 3;
 
 module.exports = Snake;

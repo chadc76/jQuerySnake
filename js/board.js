@@ -32,7 +32,6 @@ class Board {
 
     grid[this.apple.position.i][this.apple.position.j] = Apple.SYMBOL;
 
-    const rowStr = [];
     grid.map(row => row.join("")).join("\n");
   }
 

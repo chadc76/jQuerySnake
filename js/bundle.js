@@ -80,6 +80,26 @@
 	    return this.segments.slice(-1)[0];
 	  }
 
+	  eatApple() {
+	    if (this.head().equals(this.board.apple.position)) {
+	      this.growTurns += 3;
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  }
+
+	  isOccupying(array) {
+	    let result = false;
+	    this.segments.forEach(segment => {
+	      if (segment.i === array[0] && segment.j === array[1]) {
+	        result = true;
+	        return result;
+	      }
+	    });
+	    return result;
+	  }
+
 	  isValid() {
 	    const head = this.head();
 
@@ -101,8 +121,12 @@
 
 	    this.turning = false;
 
+	    if (this.eatApple()) {
+	      this.board.apple.replace();
+	    }
+
 	    if (this.growTurns > 0) {
-	      this.growTruns -= 1;
+	      this.growTurns -= 1;
 	    } else {
 	      this.segments.shift();
 	    }
@@ -131,6 +155,8 @@
 	};
 
 	Snake.SYMBOL = "S";
+
+	Snake.GROW_TURN = 3;
 
 	module.exports = Snake;
 
@@ -189,10 +215,6 @@
 	  render()  {
 	    this.updateClasses(this.board.snake.segments, "snake");
 	    this.updateClasses([this.board.apple.position], "apple");
-	    let head = this.board.snake.head();
-	    if (head) {
-	      this.updateClasses([head], this.board.snake.dir);
-	    }
 	  }
 
 	  updateClasses(coords, className) {
@@ -279,7 +301,6 @@
 
 	    grid[this.apple.position.i][this.apple.position.j] = Apple.SYMBOL;
 
-	    const rowStr = [];
 	    grid.map(row => row.join("")).join("\n");
 	  }
 
@@ -308,6 +329,12 @@
 	  replace() {
 	    let x = Math.floor(Math.random() * this.board.dim);
 	    let y = Math.floor(Math.random() * this.board.dim);
+
+	    while (this.board.snake.isOccupying([x, y])) {
+	      x = Math.floor(Math.random() * this.board.dim);
+	      y = Math.floor(Math.random() * this.board.dim);
+	    }
+
 
 	    this.position = new Coord(x,y);
 	  }
