@@ -19,7 +19,7 @@ class Snake {
   isValid() {
     const head = this.head();
 
-    if (!this.board.validPosition(head)) {
+    if (!this.board.validPosition(this.head())) {
       return false;
     }
 
@@ -27,13 +27,12 @@ class Snake {
       if (this.segments[i].equals(head)){
         return false;
       }
+    }
 
-      return true;
-    } 
+    return true; 
   }
 
   move() {
-    console.log(this.head());
     this.segments.push(this.head().plus(Snake.DIFFS[this.dir]));
 
     this.turning = false;
