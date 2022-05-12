@@ -65,7 +65,8 @@ li {
   padding-right: 5px;
 }
 
-.pause-screen {
+.pause-screen,
+.new-game {
   position: absolute;
   display: inline-block;
   margin: auto;
@@ -75,7 +76,8 @@ li {
   opacity: .88;
 }
 
-.pause-screen h2, p {
+.pause-screen h2, p,
+.new-game h2 {
   color: white;
   margin-top: 20%;
 }

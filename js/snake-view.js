@@ -5,19 +5,27 @@ class View {
   constructor($game, $scoreboard) {
     this.$game = $game;
     this.$scoreboard = $scoreboard;
-
-    this.board = new Board(20);
-    this.setupScoreboard();
-    this.setupGrid();
-    this.startInterval();
-    this.gamePaused = false;
+    this.startGame();
 
     $(window).on("keydown", this.handleKeyEvent.bind(this));
   }
 
+  startGame() {
+    this.board = new Board(20);
+    this.gameOver = false;
+    this.gamePaused = false;
+    const $s = $('.new-game');
+    $s.addClass("hidden");
+    this.setupScoreboard();
+    this.setupGrid();
+    this.startInterval();
+  }
+
   handleKeyEvent(event) {
-    if (View.KEYS[event.keyCode] === "P") {
+    if (event.keyCode === 80) {
       this.pauseGame();
+    } else if (event.keyCode === 78 && this.gameOver) {
+      this.startGame();
     } else if (View.KEYS[event.keyCode]) {
       this.board.snake.turn(View.KEYS[event.keyCode]);
     }
@@ -77,8 +85,10 @@ class View {
       this.board.snake.move();
       this.render();
     } else {
-      alert("You Lose!");
+      const $s = $('.new-game');
+      $s.removeClass("hidden");
       window.clearInterval(this.intervalId)
+      this.gameOver = true;
     }
   }
 
@@ -102,7 +112,6 @@ View.KEYS = {
   39: "E",
   40: "S",
   37: "W",
-  80: "P"
 };
 
 View.STEP_MILLIS = 100;
