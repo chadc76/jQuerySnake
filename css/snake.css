@@ -85,3 +85,27 @@ li {
 .hidden {
   display: none;
 }
+
+.leaderboard {
+  position: absolute;
+  display: inline-block;
+  margin: auto;
+  height: 400px;
+  width: 400px;
+  border: 10px solid black;
+  margin-left: 10px;
+  background: silver;
+}
+
+.leaderboard-heading {
+  border-bottom: 1px solid black;
+}
+
+th {
+  font-size: 38px;
+  padding: 0 45px;
+}
+
+td {
+  font-size: 24px;
+}
