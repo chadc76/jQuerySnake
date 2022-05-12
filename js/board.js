@@ -25,21 +25,18 @@ class Board {
   render() {
     const grid = Board.blankGrid(this.dim);
 
-    this.snake.segments.forEach( segment => {
+    this.snake.segments.forEach(segment => {
       grid[segment.i][segment.j] = Snake.SYMBOL;
     })
 
-    const rowStr = grid.map( row => row.join("") ).join("\n");
-
-    console.log(rowStr);
+    const rowStr = [];
+    grid.map(row => row.join("")).join("\n");
   }
 
   validPosition(coord) {
     return (coord.i >= 0) && (coord.i < this.dim) && 
-    (coord.j >= 0) && (coord.j < this.dim);
-  }
-
-  
+      (coord.j >= 0) && (coord.j < this.dim);
+  }  
 }
 
 Board.BLANK_SYMBOL = ".";
