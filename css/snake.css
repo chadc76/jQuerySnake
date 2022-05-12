@@ -59,9 +59,27 @@ li {
 
 .scoreboard-container {
   margin: auto;
-  align-content: left;
 }
 
 .score {
   padding-right: 5px;
+}
+
+.pause-screen {
+  position: absolute;
+  display: inline-block;
+  margin: auto;
+  height: 420px;
+  width: 420px;
+  background: black;
+  opacity: .88;
+}
+
+.pause-screen h2, p {
+  color: white;
+  margin-top: 20%;
+}
+
+.hidden {
+  display: none;
 }

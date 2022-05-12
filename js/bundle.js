@@ -208,19 +208,25 @@
 	    this.board = new Board(20);
 	    this.setupScoreboard();
 	    this.setupGrid();
-
-	    this.intervalId = window.setInterval(
-	      this.step.bind(this),
-	      View.STEP_MILLIS
-	    );
+	    this.startInterval();
+	    this.gamePaused = false;
 
 	    $(window).on("keydown", this.handleKeyEvent.bind(this));
 	  }
 
 	  handleKeyEvent(event) {
-	    if (View.KEYS[event.keyCode]) {
+	    if (View.KEYS[event.keyCode] === "P") {
+	      this.pauseGame();
+	    } else if (View.KEYS[event.keyCode]) {
 	      this.board.snake.turn(View.KEYS[event.keyCode]);
 	    }
+	  }
+
+	  startInterval() {
+	    this.intervalId = window.setInterval(
+	      this.step.bind(this),
+	      View.STEP_MILLIS
+	    );
 	  }
 
 	  render()  {
@@ -230,7 +236,7 @@
 	  }
 
 	  updateClasses(coords, className) {
-	    this.$li.filter(`.${className}`).removeClass();
+	    this.$li.filter(`.${className}`).removeClass(className);
 
 	    coords.forEach( coord => {
 	      const flatCoord = (coord.i * this.board.dim) + coord.j;
@@ -274,13 +280,28 @@
 	      window.clearInterval(this.intervalId)
 	    }
 	  }
+
+	  pauseGame() {
+	    const $p = $('.pause-screen');
+	    if (this.gamePaused) {
+	      this.startInterval();
+	      this.gamePaused = false;
+	      $p.addClass("hidden");
+	    } else {
+	      window.clearInterval(this.intervalId)
+	      this.gamePaused = true;
+	      $p.removeClass("hidden");
+
+	    }
+	  }
 	}
 
 	View.KEYS = {
 	  38: "N",
 	  39: "E",
 	  40: "S",
-	  37: "W"
+	  37: "W",
+	  80: "P"
 	};
 
 	View.STEP_MILLIS = 100;
