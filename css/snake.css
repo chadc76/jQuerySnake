@@ -49,6 +49,10 @@ li {
   background: green;
 }
 
+.apple {
+  background: red;
+}
+
 .N {
   height: 18px;
   border-top: 2px solid red;

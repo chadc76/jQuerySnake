@@ -188,6 +188,7 @@
 
 	  render()  {
 	    this.updateClasses(this.board.snake.segments, "snake");
+	    this.updateClasses([this.board.apple.position], "apple");
 	    let head = this.board.snake.head();
 	    if (head) {
 	      this.updateClasses([head], this.board.snake.dir);
@@ -244,14 +245,15 @@
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	const Coord = __webpack_require__(3);
 	const Snake = __webpack_require__(2);
+	const Apple = __webpack_require__(6);
 
 	class Board {
 	  constructor(dim) {
 	    this.dim = dim;
 
 	    this.snake = new Snake(this);
+	    this.apple = new Apple(this);
 	  }
 
 	  static blankGrid(dim) {
@@ -275,6 +277,8 @@
 	      grid[segment.i][segment.j] = Snake.SYMBOL;
 	    })
 
+	    grid[this.apple.position.i][this.apple.position.j] = Apple.SYMBOL;
+
 	    const rowStr = [];
 	    grid.map(row => row.join("")).join("\n");
 	  }
@@ -288,6 +292,30 @@
 	Board.BLANK_SYMBOL = ".";
 
 	module.exports = Board;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	const Coord = __webpack_require__(3)
+
+	class Apple {
+	  constructor(board) {
+	    this.board = board;
+	    this.replace();
+	  }
+
+	  replace() {
+	    let x = Math.floor(Math.random() * this.board.dim);
+	    let y = Math.floor(Math.random() * this.board.dim);
+
+	    this.position = new Coord(x,y);
+	  }
+	}
+
+	Apple.SYMBOL = "A"
+
+	module.exports = Apple;
 
 /***/ })
 /******/ ]);

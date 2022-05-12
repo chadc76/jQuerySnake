@@ -23,6 +23,7 @@ class View {
 
   render()  {
     this.updateClasses(this.board.snake.segments, "snake");
+    this.updateClasses([this.board.apple.position], "apple");
     let head = this.board.snake.head();
     if (head) {
       this.updateClasses([head], this.board.snake.dir);
