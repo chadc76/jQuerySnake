@@ -192,7 +192,7 @@
 	  }
 
 	  addToLeaderboard() {
-	    if (this.leaderboard[0][1] >= this.board.score) {
+	    if (this.leaderboard.length === 9 && this.leaderboard[0][1] >= this.board.score) {
 	      return;
 	    }
 	    let name = window.prompt("Enter your name for leaderboard: ")
