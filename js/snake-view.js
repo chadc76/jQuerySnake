@@ -5,6 +5,7 @@ class View {
   constructor($game, $scoreboard) {
     this.$game = $game;
     this.$scoreboard = $scoreboard;
+    this.leaderboard = [["chad", 80], ["chad", 10], ["chad", 20], ["chad", 30], ["chad", 40], ["chad", 50], ["chad", 60], ["chad", 70], ["chad", 0]];
     this.startGame();
 
     $(window).on("keydown", this.handleKeyEvent.bind(this));
@@ -17,6 +18,7 @@ class View {
     const $s = $('.new-game');
     $s.addClass("hidden");
     this.setupScoreboard();
+    this.setupLeaderboard();
     this.setupGrid();
     this.startInterval();
   }
@@ -69,7 +71,12 @@ class View {
   }
 
   setupScoreboard() {
-    let score = this.board.score.toString();
+    let score = this.stringScore(this.board.score);
+    this.$scoreboard.html(score);
+  }
+
+  stringScore(numericScore) {
+    let score = numericScore.toString();
     if (score.length === 1) {
       score = "000" + score
     } else if (score.length === 2) {
@@ -77,7 +84,29 @@ class View {
     } else if (score.length === 3) {
       score = "0" + score
     }
-    this.$scoreboard.html(score);
+    return score;
+  }
+
+  setupLeaderboard() {
+    $(".table").find(".score").remove();
+
+    if (this.leaderboard.length > 0) {
+      this.leaderboard = this.leaderboard.sort((x, y) => {
+        return x[1] - y[1];
+      });
+
+      if (this.leaderboard.length > 9) {
+        this.leaderboard.shift();
+      }
+
+      const $t = $('.table');
+
+      for (let i = this.leaderboard.length - 1; i >= 0; i--) {
+        let name = this.leaderboard[i][0];
+        let score = this.leaderboard[i][1];
+        $t.append(`<tr class="score"><td>${name}</td><td>${this.stringScore(score)}</td></tr>`);
+      }
+    }
   }
 
   step() {
@@ -85,11 +114,24 @@ class View {
       this.board.snake.move();
       this.render();
     } else {
-      const $s = $('.new-game');
-      $s.removeClass("hidden");
-      window.clearInterval(this.intervalId)
-      this.gameOver = true;
+      this.endGame();
     }
+  }
+
+  endGame() {
+    this.addToLeaderboard();
+    const $s = $('.new-game');
+    $s.removeClass("hidden");
+    window.clearInterval(this.intervalId)
+    this.gameOver = true;
+  }
+
+  addToLeaderboard() {
+    if (this.leaderboard[0][1] >= this.board.score) {
+      return;
+    }
+    let name = window.prompt("Enter your name for leaderboard: ")
+    this.leaderboard.push([name, this.board.score]);
   }
 
   pauseGame() {

@@ -40,20 +40,18 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(1);
 
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	const SnakeView = __webpack_require__(4);
+	const SnakeView = __webpack_require__(2);
 
 	$(() => {
 	  const game = $('.snake-game');
@@ -62,148 +60,17 @@
 	});
 
 /***/ }),
-
-/***/ 2:
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	const Coord = __webpack_require__(3)
-
-	class Snake {
-	  constructor(board) {
-	    this.dir = "N";
-	    this.turning = false;
-	    this.board = board;
-
-	    const center = new Coord(Math.floor(board.dim / 2), Math.floor(board.dim / 2));
-	    this.segments = [center];
-
-	    this.growTurns = 0;
-	  }
-
-	  head() {
-	    return this.segments.slice(-1)[0];
-	  }
-
-	  eatApple() {
-	    if (this.head().equals(this.board.apple.position)) {
-	      this.growTurns += 3;
-	      this.board.score += 10;
-	      return true;
-	    } else {
-	      return false;
-	    }
-	  }
-
-	  isOccupying(array) {
-	    let result = false;
-	    this.segments.forEach(segment => {
-	      if (segment.i === array[0] && segment.j === array[1]) {
-	        result = true;
-	        return result;
-	      }
-	    });
-	    return result;
-	  }
-
-	  isValid() {
-	    const head = this.head();
-
-	    if (!this.board.validPosition(this.head())) {
-	      return false;
-	    }
-
-	    for (let i = 0; i < this.segments.length - 1; i++) {
-	      if (this.segments[i].equals(head)){
-	        return false;
-	      }
-	    }
-
-	    return true; 
-	  }
-
-	  move() {
-	    this.segments.push(this.head().plus(Snake.DIFFS[this.dir]));
-
-	    this.turning = false;
-
-	    if (this.eatApple()) {
-	      this.board.apple.replace();
-	    }
-
-	    if (this.growTurns > 0) {
-	      this.growTurns -= 1;
-	    } else {
-	      this.segments.shift();
-	    }
-
-	    if (!this.isValid()) {
-	      this.segments = [];
-	    }
-
-	  }
-
-	  turn(dir) {
-	    if (Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[dir]) ||
-	      this.turning) {
-	      return;
-	    } else {
-	      this.turning = true;
-	      this.dir = dir;
-	    }
-	  }
-	}
-
-	Snake.DIFFS = {
-	  "N": new Coord(-1, 0),
-	  "E": new Coord(0, 1),
-	  "S": new Coord(1, 0),
-	  "W": new Coord(0, -1)
-	};
-
-	Snake.SYMBOL = "S";
-
-	Snake.GROW_TURN = 3;
-
-	module.exports = Snake;
-
-/***/ }),
-
-/***/ 3:
-/***/ (function(module, exports) {
-
-	class Coord {
-	  constructor(i, j) {
-	    this.i = i;
-	    this.j = j;
-	  }
-
-	  plus(coord) {
-	    return new Coord(this.i + coord.i, this.j + coord.j);
-	  }
-
-	  equals(coord) {
-	    return (this.i == coord.i) && (this.j == coord.j);
-	  }
-
-	  isOpposite(coord) {
-	    return (this.i == (-1 * coord.i)) && (this.j == (-1 * coord.j));
-	  }
-	}
-
-	module.exports = Coord;
-
-/***/ }),
-
-/***/ 4:
-/***/ (function(module, exports, __webpack_require__) {
-
-	const { divide } = __webpack_require__(50);
+	const { divide } = __webpack_require__(3);
 	const Board = __webpack_require__(5);
 
 	class View {
 	  constructor($game, $scoreboard) {
 	    this.$game = $game;
 	    this.$scoreboard = $scoreboard;
+	    this.leaderboard = [["chad", 80], ["chad", 10], ["chad", 20], ["chad", 30], ["chad", 40], ["chad", 50], ["chad", 60], ["chad", 70], ["chad", 0]];
 	    this.startGame();
 
 	    $(window).on("keydown", this.handleKeyEvent.bind(this));
@@ -216,6 +83,7 @@
 	    const $s = $('.new-game');
 	    $s.addClass("hidden");
 	    this.setupScoreboard();
+	    this.setupLeaderboard();
 	    this.setupGrid();
 	    this.startInterval();
 	  }
@@ -268,7 +136,12 @@
 	  }
 
 	  setupScoreboard() {
-	    let score = this.board.score.toString();
+	    let score = this.stringScore(this.board.score);
+	    this.$scoreboard.html(score);
+	  }
+
+	  stringScore(numericScore) {
+	    let score = numericScore.toString();
 	    if (score.length === 1) {
 	      score = "000" + score
 	    } else if (score.length === 2) {
@@ -276,7 +149,29 @@
 	    } else if (score.length === 3) {
 	      score = "0" + score
 	    }
-	    this.$scoreboard.html(score);
+	    return score;
+	  }
+
+	  setupLeaderboard() {
+	    $(".table").find(".score").remove();
+
+	    if (this.leaderboard.length > 0) {
+	      this.leaderboard = this.leaderboard.sort((x, y) => {
+	        return x[1] - y[1];
+	      });
+
+	      if (this.leaderboard.length > 9) {
+	        this.leaderboard.shift();
+	      }
+
+	      const $t = $('.table');
+
+	      for (let i = this.leaderboard.length - 1; i >= 0; i--) {
+	        let name = this.leaderboard[i][0];
+	        let score = this.leaderboard[i][1];
+	        $t.append(`<tr class="score"><td>${name}</td><td>${this.stringScore(score)}</td></tr>`);
+	      }
+	    }
 	  }
 
 	  step() {
@@ -284,11 +179,24 @@
 	      this.board.snake.move();
 	      this.render();
 	    } else {
-	      const $s = $('.new-game');
-	      $s.removeClass("hidden");
-	      window.clearInterval(this.intervalId)
-	      this.gameOver = true;
+	      this.endGame();
 	    }
+	  }
+
+	  endGame() {
+	    this.addToLeaderboard();
+	    const $s = $('.new-game');
+	    $s.removeClass("hidden");
+	    window.clearInterval(this.intervalId)
+	    this.gameOver = true;
+	  }
+
+	  addToLeaderboard() {
+	    if (this.leaderboard[0][1] >= this.board.score) {
+	      return;
+	    }
+	    let name = window.prompt("Enter your name for leaderboard: ")
+	    this.leaderboard.push([name, this.board.score]);
 	  }
 
 	  pauseGame() {
@@ -318,93 +226,7 @@
 	module.exports = View;
 
 /***/ }),
-
-/***/ 5:
-/***/ (function(module, exports, __webpack_require__) {
-
-	const Snake = __webpack_require__(2);
-	const Apple = __webpack_require__(6);
-
-	class Board {
-	  constructor(dim) {
-	    this.dim = dim;
-
-	    this.snake = new Snake(this);
-	    this.apple = new Apple(this);
-
-	    this.score = 0;
-	  }
-
-	  static blankGrid(dim) {
-	    let grid = [];
-
-	    for (let i = 0; i < dim; i++) {
-	      let row = [];
-	      for (let j = 0; j < dim; j++) {
-	        row.push(Board.BLANK_SYMBOL);
-	      }
-	      grid.push(row);
-	    }
-
-	    return grid;
-	  }
-
-	  render() {
-	    const grid = Board.blankGrid(this.dim);
-
-	    this.snake.segments.forEach(segment => {
-	      grid[segment.i][segment.j] = Snake.SYMBOL;
-	    })
-
-	    grid[this.apple.position.i][this.apple.position.j] = Apple.SYMBOL;
-
-	    grid.map(row => row.join("")).join("\n");
-	  }
-
-	  validPosition(coord) {
-	    return (coord.i >= 0) && (coord.i < this.dim) && 
-	      (coord.j >= 0) && (coord.j < this.dim);
-	  }  
-	}
-
-	Board.BLANK_SYMBOL = ".";
-
-	module.exports = Board;
-
-/***/ }),
-
-/***/ 6:
-/***/ (function(module, exports, __webpack_require__) {
-
-	const Coord = __webpack_require__(3)
-
-	class Apple {
-	  constructor(board) {
-	    this.board = board;
-	    this.replace();
-	  }
-
-	  replace() {
-	    let x = Math.floor(Math.random() * this.board.dim);
-	    let y = Math.floor(Math.random() * this.board.dim);
-
-	    while (this.board.snake.isOccupying([x, y])) {
-	      x = Math.floor(Math.random() * this.board.dim);
-	      y = Math.floor(Math.random() * this.board.dim);
-	    }
-
-
-	    this.position = new Coord(x,y);
-	  }
-	}
-
-	Apple.SYMBOL = "A"
-
-	module.exports = Apple;
-
-/***/ }),
-
-/***/ 50:
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -17617,11 +17439,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(51)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)(module)))
 
 /***/ }),
-
-/***/ 51:
+/* 4 */
 /***/ (function(module, exports) {
 
 	module.exports = function(module) {
@@ -17636,6 +17457,217 @@
 	}
 
 
-/***/ })
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+	const Snake = __webpack_require__(6);
+	const Apple = __webpack_require__(8);
+
+	class Board {
+	  constructor(dim) {
+	    this.dim = dim;
+
+	    this.snake = new Snake(this);
+	    this.apple = new Apple(this);
+
+	    this.score = 0;
+	  }
+
+	  static blankGrid(dim) {
+	    let grid = [];
+
+	    for (let i = 0; i < dim; i++) {
+	      let row = [];
+	      for (let j = 0; j < dim; j++) {
+	        row.push(Board.BLANK_SYMBOL);
+	      }
+	      grid.push(row);
+	    }
+
+	    return grid;
+	  }
+
+	  render() {
+	    const grid = Board.blankGrid(this.dim);
+
+	    this.snake.segments.forEach(segment => {
+	      grid[segment.i][segment.j] = Snake.SYMBOL;
+	    })
+
+	    grid[this.apple.position.i][this.apple.position.j] = Apple.SYMBOL;
+
+	    grid.map(row => row.join("")).join("\n");
+	  }
+
+	  validPosition(coord) {
+	    return (coord.i >= 0) && (coord.i < this.dim) && 
+	      (coord.j >= 0) && (coord.j < this.dim);
+	  }  
+	}
+
+	Board.BLANK_SYMBOL = ".";
+
+	module.exports = Board;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	const Coord = __webpack_require__(7)
+
+	class Snake {
+	  constructor(board) {
+	    this.dir = "N";
+	    this.turning = false;
+	    this.board = board;
+
+	    const center = new Coord(Math.floor(board.dim / 2), Math.floor(board.dim / 2));
+	    this.segments = [center];
+
+	    this.growTurns = 0;
+	  }
+
+	  head() {
+	    return this.segments.slice(-1)[0];
+	  }
+
+	  eatApple() {
+	    if (this.head().equals(this.board.apple.position)) {
+	      this.growTurns += 3;
+	      this.board.score += 10;
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  }
+
+	  isOccupying(array) {
+	    let result = false;
+	    this.segments.forEach(segment => {
+	      if (segment.i === array[0] && segment.j === array[1]) {
+	        result = true;
+	        return result;
+	      }
+	    });
+	    return result;
+	  }
+
+	  isValid() {
+	    const head = this.head();
+
+	    if (!this.board.validPosition(this.head())) {
+	      return false;
+	    }
+
+	    for (let i = 0; i < this.segments.length - 1; i++) {
+	      if (this.segments[i].equals(head)){
+	        return false;
+	      }
+	    }
+
+	    return true; 
+	  }
+
+	  move() {
+	    this.segments.push(this.head().plus(Snake.DIFFS[this.dir]));
+
+	    this.turning = false;
+
+	    if (this.eatApple()) {
+	      this.board.apple.replace();
+	    }
+
+	    if (this.growTurns > 0) {
+	      this.growTurns -= 1;
+	    } else {
+	      this.segments.shift();
+	    }
+
+	    if (!this.isValid()) {
+	      this.segments = [];
+	    }
+
+	  }
+
+	  turn(dir) {
+	    if (Snake.DIFFS[this.dir].isOpposite(Snake.DIFFS[dir]) ||
+	      this.turning) {
+	      return;
+	    } else {
+	      this.turning = true;
+	      this.dir = dir;
+	    }
+	  }
+	}
+
+	Snake.DIFFS = {
+	  "N": new Coord(-1, 0),
+	  "E": new Coord(0, 1),
+	  "S": new Coord(1, 0),
+	  "W": new Coord(0, -1)
+	};
+
+	Snake.SYMBOL = "S";
+
+	Snake.GROW_TURN = 3;
+
+	module.exports = Snake;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+	class Coord {
+	  constructor(i, j) {
+	    this.i = i;
+	    this.j = j;
+	  }
+
+	  plus(coord) {
+	    return new Coord(this.i + coord.i, this.j + coord.j);
+	  }
+
+	  equals(coord) {
+	    return (this.i == coord.i) && (this.j == coord.j);
+	  }
+
+	  isOpposite(coord) {
+	    return (this.i == (-1 * coord.i)) && (this.j == (-1 * coord.j));
+	  }
+	}
+
+	module.exports = Coord;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	const Coord = __webpack_require__(7)
+
+	class Apple {
+	  constructor(board) {
+	    this.board = board;
+	    this.replace();
+	  }
+
+	  replace() {
+	    let x = Math.floor(Math.random() * this.board.dim);
+	    let y = Math.floor(Math.random() * this.board.dim);
+
+	    while (this.board.snake.isOccupying([x, y])) {
+	      x = Math.floor(Math.random() * this.board.dim);
+	      y = Math.floor(Math.random() * this.board.dim);
+	    }
+
+
+	    this.position = new Coord(x,y);
+	  }
+	}
+
+	Apple.SYMBOL = "A"
+
+	module.exports = Apple;
+
+/***/ })
+/******/ ]);
