@@ -120,6 +120,7 @@ class View {
 
   endGame() {
     this.addToLeaderboard();
+    this.setupLeaderboard();
     const $s = $('.new-game');
     $s.removeClass("hidden");
     window.clearInterval(this.intervalId)
