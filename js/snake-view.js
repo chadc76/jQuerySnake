@@ -5,7 +5,7 @@ class View {
   constructor($game, $scoreboard) {
     this.$game = $game;
     this.$scoreboard = $scoreboard;
-    this.leaderboard = [["chad", 80], ["chad", 10], ["chad", 20], ["chad", 30], ["chad", 40], ["chad", 50], ["chad", 60], ["chad", 70], ["chad", 0]];
+    this.leaderboard = [];
     this.startGame();
 
     $(window).on("keydown", this.handleKeyEvent.bind(this));
